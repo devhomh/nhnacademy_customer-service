@@ -26,7 +26,7 @@ public class RootConfig {
     public UserRepository userRepository(){
         UserRepository userRepository = new UserRepositoryImpl();
         userRepository.addUser(User.create("admin_main", "1234").setName("이진우").setAuth(User.Auth.ROLE_ADMIN));
-        userRepository.addUser(User.create("sub_main", "1234").setName("김진우").setAuth(User.Auth.ROLE_ADMIN));
+        userRepository.addUser(User.create("admin_sub", "1234").setName("김진우").setAuth(User.Auth.ROLE_ADMIN));
         userRepository.addUser(User.create("jinwoo", "4567").setName("박진우").setAuth(User.Auth.ROLE_CUSTOMER));
         userRepository.addUser(User.create("hahajinwoo", "haha12").setName("최진우").setAuth(User.Auth.ROLE_CUSTOMER));
 

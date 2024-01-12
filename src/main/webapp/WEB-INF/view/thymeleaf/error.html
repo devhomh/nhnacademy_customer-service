@@ -2,9 +2,10 @@
 <html lang="ko">
     <head>
         <meta charset="UTF-8">
-        <title>에러 페이지</title>
+        <title th:text="${httpStatusCode} + ' 에러 페이지'"></title>
     </head>
     <body>
-
+        <h1 th:text="${httpStatusCode} + 'Error !'" style="color: red;font-weight: 600"></h1>
+        <h3 th:text="${errorMsg}"></h3>
     </body>
 </html>
