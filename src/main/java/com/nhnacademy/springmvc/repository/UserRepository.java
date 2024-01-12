@@ -8,5 +8,5 @@ public interface UserRepository {
 
     User getUser(String id);
 
-    User addUser(String id, String password);
+    User addUser(User user);
 }

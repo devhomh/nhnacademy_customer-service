@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>NHN Mart 고객 센터 | 관리자 페이지</title>
+</head>
+<body>
+    <h1 th:text="${user.name} + '님 환영 합니다!'"></h1>
+
+    <form method="POST" action="/logout" >
+        <button type="submit">로그아웃</button>
+    </form>
+</body>
+</html>
