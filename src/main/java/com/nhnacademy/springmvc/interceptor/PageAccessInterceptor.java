@@ -1,7 +1,6 @@
 package com.nhnacademy.springmvc.interceptor;
 
 import com.nhnacademy.springmvc.domain.User;
-import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;

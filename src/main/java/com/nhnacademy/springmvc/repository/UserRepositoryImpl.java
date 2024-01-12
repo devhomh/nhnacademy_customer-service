@@ -1,7 +1,7 @@
 package com.nhnacademy.springmvc.repository;
 
 import com.nhnacademy.springmvc.domain.User;
-import com.nhnacademy.springmvc.exception.UserAlreadyException;
+import com.nhnacademy.springmvc.exception.UserAlreadyExistsException;
 import com.nhnacademy.springmvc.exception.UserNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
@@ -38,7 +38,7 @@ public class UserRepositoryImpl implements UserRepository{
         }
 
         if (exists(user.getId())) {
-            throw new UserAlreadyException();
+            throw new UserAlreadyExistsException();
         }
         userMap.put(user.getId(), user);
         return userMap.get(user.getId());
