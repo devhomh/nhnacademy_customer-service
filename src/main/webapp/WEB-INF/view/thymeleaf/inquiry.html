@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${inquiry.title}"></title>
+</head>
+<body>
+    <h1 th:text="${inquiry.title}"></h1>
+    <h3 th:text="${type}"></h3>
+    <h3 th:text="'작성자 : ' + ${inquiry.userId}"></h3>
+    <h3 th:text="'작성일 : ' + ${inquiry.date}"></h3>
+    <p th:text="${inquiry.comment}"></p>
+    <div th:each="fileName : ${fileNameList}">
+        <img th:src="'/uploads/' + ${fileName}" alt="Img failed to load" style="height: 200px; width: 200px">
+    </div>
+    <br/>
+    <button th:onclick="|location.href='/inquiry/' + ${inquiry.id} + '/modify'|">수정</button>
+    <form method="post" th:action="@{'/inquiry/' + ${inquiry.id} + '/remove'}">
+        <button>삭제</button>
+    </form>
+    <button th:onclick="|location.href='/'|">목록</button>
+</body>
+</html>

@@ -5,9 +5,9 @@ import java.util.Map;
 
 public interface InquiryRepository {
     Map<Long, Inquiry> findAll();
-    boolean exists(Long id);
-    Inquiry getInquiry(Long id);
+    boolean exists(long id);
+    Inquiry getInquiry(long id);
     Inquiry registerInquiry(Inquiry inquiry);
     Inquiry modifyInquiry(Inquiry inquiry);
-    void removeInquiry(Long id);
+    void removeInquiry(long id);
 }

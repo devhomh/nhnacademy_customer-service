@@ -7,11 +7,17 @@
 <body>
     <h1 th:text="${user.name} + '님 환영 합니다!'"></h1>
     <ul th:each="inquiry : ${inquiryList}">
-        <li th:text="${inquiry.title}"><a th:href="@{'/user/' + ${user.id} + '/inquiry/' + ${inquiry.id}}"></a></li>
+        <li>
+            <a th:href="@{'/inquiry/' + ${inquiry.id}}">
+                <span th:text="${inquiry.title}"></span>
+            </a>
+        </li>
     </ul>
-
-    <form method="POST" action="/logout" >
-        <button type="submit">로그아웃</button>
-    </form>
+    <div>
+        <button onclick="location.href='/inquiry/register'">문의하기</button>
+        <form method="POST" action="/logout" >
+            <button type="submit">로그아웃</button>
+        </form>
+    </div>
 </body>
 </html>

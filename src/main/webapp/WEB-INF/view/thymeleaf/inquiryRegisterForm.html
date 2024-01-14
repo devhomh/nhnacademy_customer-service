@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NHN Mart 고객 센터 | 문의 등록</title>
+</head>
+<body>
+    <form method="post"
+          th:action="${#strings.isEmpty(inquiry) ? '/inquiry/register' : '/inquiry/' + inquiry.id + '/modify'}"
+          enctype="multipart/form-data">
+        <label for="title">제목</label>
+        <input id="title"
+               name="title"
+               type="text"
+               style="width: 400px; height: 20px"
+               th:value="${not #strings.isEmpty(inquiry) ? inquiry.title : ''}"
+               required/>
+        <br/>
+        <label for="type">문의 유형</label>
+        <select id="type" name="type">
+            <option th:each="type : ${typeList}"
+                    th:value="${type}"
+                    th:text="${type}"
+                    th:selected="${type} == ${selected}">
+            </option>
+        </select>
+        <br/>
+        <label for="comment">본문</label>
+        <br/>
+        <input id="comment"
+               name="comment"
+               placeholder="400자 내로 입력 해주세요"
+               type="text" style="height: 400px; width: 400px"
+               th:value="${not #strings.isEmpty(inquiry) ? inquiry.comment : ''}"
+               required/>
+        <br/>
+        <div th:if="${not #strings.isEmpty(fileNameList)}">
+            <span>첨부 파일 목록</span>
+            <ul>
+                <th:block th:each="fileName : ${fileNameList}">
+                    <li th:text="${fileName}"></li>
+                    <button type="submit" th:formaction="@{'/uploads/' + ${fileName} + '/remove'(inquiryId=${inquiry.id})}">파일 삭제</button>
+                </th:block>
+            </ul>
+        </div>
+        <label for="file">첨부파일</label>
+        <input id="file"
+               name="files"
+               type="file"
+               th:value="${not #strings.isEmpty(inquiry) ? inquiry.files : ''}"
+               multiple/>
+        <br/>
+        <button type="submit" th:text="${#strings.isEmpty(inquiry) ? '등록' : '수정'}"></button>
+        <button type="button" th:onclick="/">취소</button>
+    </form>
+</body>
+</html>

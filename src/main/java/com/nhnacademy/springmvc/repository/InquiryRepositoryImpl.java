@@ -16,20 +16,12 @@ public class InquiryRepositoryImpl implements InquiryRepository{
     }
 
     @Override
-    public boolean exists(Long id) {
-        if(Objects.isNull(id)){
-            throw new NullPointerException("Object is null");
-        }
-
+    public boolean exists(long id) {
         return inquiryMap.containsKey(id);
     }
 
     @Override
-    public Inquiry getInquiry(Long id) {
-        if(Objects.isNull(id)){
-            throw new NullPointerException("Object is null");
-        }
-
+    public Inquiry getInquiry(long id) {
         if(!exists(id)){
             throw new InquiryNotFoundException();
         }
@@ -57,22 +49,22 @@ public class InquiryRepositoryImpl implements InquiryRepository{
             throw new NullPointerException("Object is null");
         }
 
-        Long id = inquiry.getId();
-        Inquiry older = inquiryMap.get(id);
+        long id = inquiry.getId();
 
-        if (exists(id)) {
-            throw new InquiryAlreadyExistsException();
+        if (!exists(id)) {
+            throw new InquiryNotFoundException();
         }
 
+        Inquiry older = inquiryMap.get(id);
         inquiryMap.replace(id, older, inquiry);
 
         return inquiryMap.get(id);
     }
 
     @Override
-    public void removeInquiry(Long id) {
-        if (exists(id)) {
-            throw new InquiryAlreadyExistsException();
+    public void removeInquiry(long id) {
+        if (!exists(id)) {
+            throw new InquiryNotFoundException();
         }
 
         inquiryMap.remove(id);
