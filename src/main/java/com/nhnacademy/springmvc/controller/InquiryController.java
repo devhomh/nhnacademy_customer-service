@@ -1,12 +1,16 @@
 package com.nhnacademy.springmvc.controller;
 
 
+import com.nhnacademy.springmvc.domain.Answer;
+import com.nhnacademy.springmvc.domain.AnswerRequest;
 import com.nhnacademy.springmvc.domain.Inquiry;
 import com.nhnacademy.springmvc.domain.InquiryRequest;
 import com.nhnacademy.springmvc.domain.User;
 import com.nhnacademy.springmvc.exception.EnumTypeNotFoundException;
 import com.nhnacademy.springmvc.exception.ValidationFailedException;
+import com.nhnacademy.springmvc.repository.AnswerRepository;
 import com.nhnacademy.springmvc.repository.InquiryRepository;
+import com.nhnacademy.springmvc.repository.UserRepository;
 import com.nhnacademy.springmvc.validator.FileExtensionValidator;
 import java.io.File;
 import java.io.IOException;
@@ -42,23 +46,51 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/inquiry")
 public class InquiryController {
     private final InquiryRepository inquiryRepository;
+    private final AnswerRepository answerRepository;
+    private final UserRepository userRepository;
     private final FileExtensionValidator validator;
 
-    public InquiryController(InquiryRepository inquiryRepository, FileExtensionValidator fileExtensionValidator) {
+    public InquiryController(InquiryRepository inquiryRepository,
+                             AnswerRepository answerRepository,
+                             UserRepository userRepository,
+                             FileExtensionValidator fileExtensionValidator) {
+        this.answerRepository = answerRepository;
         this.inquiryRepository = inquiryRepository;
+        this.userRepository = userRepository;
         this.validator = fileExtensionValidator;
     }
 
     @GetMapping("/{inquiryId}")
     public String viewInquiry(@PathVariable("inquiryId") long inquiryId,
+                             HttpServletRequest request,
                              ModelMap modelMap){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("login");
+        String auth = user.getAuth() == User.Auth.ROLE_ADMIN ? "admin" : "customer";
+
         Inquiry inquiry = inquiryRepository.getInquiry(inquiryId);
         String type = inquiry.getType().value();
 
         if(Objects.nonNull(inquiry.getFiles())){
             List<String> fileNameList = new ArrayList<>(inquiry.getFiles().keySet());
-            modelMap.addAttribute("fileNameList", fileNameList);
+            modelMap.addAttribute("inquiryFileNameList", fileNameList);
         }
+
+        if(answerRepository.exists(inquiryId)){
+            Answer answer = answerRepository.getAnswer(inquiryId);
+            modelMap.addAttribute("answer", answer);
+
+            String answerAdminId = answer.getUserId();
+            User admin = userRepository.getUser(answerAdminId);
+            modelMap.addAttribute("adminName", admin.getName());
+
+            if(Objects.nonNull(answer.getFiles())){
+                List<String> fileNameList = new ArrayList<>(answer.getFiles().keySet());
+                modelMap.addAttribute("answerFileNameList", fileNameList);
+            }
+        }
+
+        modelMap.addAttribute("auth", auth);
         modelMap.addAttribute("type", type);
         modelMap.addAttribute("inquiry", inquiry);
 
@@ -116,6 +148,12 @@ public class InquiryController {
         return fileName;
     }
 
+    private String getUserid(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("login");
+        return user.getId();
+    }
+
     private void uploadFiles(HttpServletRequest request, String userId, Inquiry inquiry, List<MultipartFile> files){
         if(Objects.nonNull(files)){
             Map<String, MultipartFile> fileMap = Objects.nonNull(inquiry.getFiles())
@@ -150,9 +188,7 @@ public class InquiryController {
             throw new ValidationFailedException(bindingResult);
         }
 
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("login");
-        String userId = user.getId();
+        String userId = getUserid(request);
 
         Inquiry inquiry = Inquiry.create(userId)
                 .setTitle(inquiryRequest.getTitle())
@@ -194,9 +230,7 @@ public class InquiryController {
             throw new ValidationFailedException(bindingResult);
         }
 
-        HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("login");
-        String userId = user.getId();
+        String userId = getUserid(request);
 
         Inquiry inquiry = inquiryRepository.getInquiry(id);
 
@@ -219,6 +253,62 @@ public class InquiryController {
         inquiryRepository.removeInquiry(id);
 
         return "redirect:/";
+    }
+
+    @GetMapping("/{inquiryId}/answer")
+    public String answerForm(@PathVariable("inquiryId") long id,
+                             ModelMap modelMap){
+        Inquiry inquiry = inquiryRepository.getInquiry(id);
+        modelMap.addAttribute("inquiry", inquiry);
+
+        return "thymeleaf/answerForm";
+    }
+
+    @PostMapping("/{inquiryId}/answer")
+    public String answerInquiry(@PathVariable("inquiryId") long inquiryId,
+                                HttpServletRequest request,
+                                @Valid @ModelAttribute AnswerRequest answerRequest,
+                                BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            throw new ValidationFailedException(bindingResult);
+        }
+
+        Inquiry inquiry = inquiryRepository.getInquiry(inquiryId);
+        String userId = getUserid(request);
+
+        Answer answer = Answer.create(inquiryId, userId)
+                .setTitle(answerRequest.getTitle())
+                .setComment(answerRequest.getComment());
+
+        List<MultipartFile> files = answerRequest.getFiles();
+
+        if(Objects.nonNull(files)){
+            Map<String, MultipartFile> fileMap = new HashMap<>();
+
+            for (MultipartFile file : files) {
+                if(!Objects.equals(file.getOriginalFilename(), "")){
+                    String directory = getDirectory(request);
+                    String fileName = userId + "_" + inquiry.getId() + "_" + file.getOriginalFilename();
+                    fileName = resolveDuplicateName(fileMap, fileName);
+
+                    Path filePath = Paths.get(directory, fileName);
+
+                    try {
+                        file.transferTo(filePath.toFile());
+                    } catch (IOException exception){
+                        log.error("File Upload Error");
+                    }
+                    fileMap.put(fileName, file);
+                }
+            }
+            answer.uploadFiles(fileMap);
+        }
+
+        inquiry.answered();
+        inquiryRepository.modifyInquiry(inquiry);
+        answerRepository.registerAnswer(answer);
+
+        return "redirect:/inquiry/" + inquiry.getId();
     }
 
     @InitBinder("inquiryRequest")

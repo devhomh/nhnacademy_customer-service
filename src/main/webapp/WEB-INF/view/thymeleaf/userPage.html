@@ -15,13 +15,32 @@
             </option>
         </select>
     </form>
-    <ul th:each="inquiry : ${inquiryList}">
-        <li>
-            <a th:href="@{'/inquiry/' + ${inquiry.id}}">
-                <span th:text="${inquiry.title}"></span>
-            </a>
-        </li>
-    </ul>
+    <table style="width: 500px;">
+        <thead>
+        <tr>
+            <th>제목</th>
+            <th>작성일시</th>
+            <th>답변여부</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="inquiry : ${inquiryList}">
+            <td>
+                <a th:href="@{'/inquiry/' + ${inquiry.id}}">
+                    <span th:text="${inquiry.title}"></span>
+                </a>
+            </td>
+            <td>
+                <span th:text="${inquiry.date}"></span>
+            </td>
+            <td>
+                <span th:text="${inquiry.answered ? '답변 완료' : '미답변'}"
+                      th:style="${inquiry.answered ? 'color:green' : 'color:red'}">
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
     <div>
         <button onclick="location.href='/inquiry/register'">문의하기</button>
         <form method="POST" action="/logout" >

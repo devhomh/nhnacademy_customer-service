@@ -22,7 +22,7 @@ public class Inquiry {
         }
     }
     private static final AtomicLong counter = new AtomicLong();
-    private final Long id;
+    private final long id;
     private final String userId;
     @Setter
     private String date;
@@ -30,6 +30,7 @@ public class Inquiry {
     private String title;
     private String comment;
     private Map<String, MultipartFile> files;
+    private boolean answered;
 
     public static Inquiry create(String userId){
         return new Inquiry(userId);
@@ -59,6 +60,11 @@ public class Inquiry {
 
     public Inquiry uploadFiles(Map<String, MultipartFile> files){
         this.files = files;
+        return this;
+    }
+
+    public Inquiry answered(){
+        this.answered = true;
         return this;
     }
 

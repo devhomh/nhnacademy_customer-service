@@ -5,17 +5,35 @@
     <title th:text="${inquiry.title}"></title>
 </head>
 <body>
-    <h1 th:text="${inquiry.title}"></h1>
-    <h3 th:text="${type}"></h3>
-    <h3 th:text="'작성자 : ' + ${inquiry.userId}"></h3>
-    <h3 th:text="'작성일 : ' + ${inquiry.date}"></h3>
-    <p th:text="${inquiry.comment}"></p>
-    <div th:each="fileName : ${fileNameList}">
-        <img th:src="'/uploads/' + ${fileName}" alt="Img failed to load" style="height: 200px; width: 200px">
+    <div>
+        <h1 th:text="${inquiry.title}"></h1>
+        <h3 th:text="${type}"></h3>
+        <h3 th:text="${inquiry.answered ? '답변 완료' : '미답변'}"
+            th:style="${inquiry.answered ? 'color:green' : 'color:red'}">
+        </h3>
+        <h3 th:text="'작성자 : ' + ${inquiry.userId}"></h3>
+        <h3 th:text="'작성일 : ' + ${inquiry.date}"></h3>
+        <p th:text="${inquiry.comment}"></p>
+        <div th:each="inquiryFileName : ${inquiryFileNameList}">
+            <img th:src="'/uploads/' + ${inquiryFileName}" alt="Img failed to load" style="height: 200px; width: 200px">
+        </div>
+        <br/>
     </div>
-    <br/>
-    <button th:onclick="|location.href='/inquiry/' + ${inquiry.id} + '/modify'|">수정</button>
-    <form method="post" th:action="@{'/inquiry/' + ${inquiry.id} + '/remove'}">
+
+    <div th:if="${not #strings.isEmpty(answer)}" style="background-color: antiquewhite">
+        <h1 th:text="${answer.title}"></h1>
+        <h3 th:text="'답변자 : ' + ${adminName}"></h3>
+        <h3 th:text="'작성일 : ' + ${answer.date}"></h3>
+        <p th:text="${answer.comment}"></p>
+        <div th:each="answerFileName : ${answerFileNameList}">
+            <img th:src="'/uploads/' + ${answerFileName}" alt="Img failed to load" style="height: 200px; width: 200px">
+        </div>
+    </div>
+
+    <button th:if="${auth == 'admin'}" th:onclick="|location.href='/inquiry/' + ${inquiry.id} + '/answer'|">답변하기</button>
+
+    <button th:if="${auth == 'customer'}" th:onclick="|location.href='/inquiry/' + ${inquiry.id} + '/modify'|">수정</button>
+    <form th:if="${auth == 'customer'}" method="post" th:action="@{'/inquiry/' + ${inquiry.id} + '/remove'}">
         <button>삭제</button>
     </form>
     <button th:onclick="|location.href='/'|">목록</button>

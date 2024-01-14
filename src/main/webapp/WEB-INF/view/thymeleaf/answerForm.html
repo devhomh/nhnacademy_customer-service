@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${inquiry.title} + ' | 답변하기'"></title>
+</head>
+<body>
+    <h1 th:text="${inquiry.title}"></h1>
+    <h3 th:text="${type}"></h3>
+    <h3 th:text="'작성자 : ' + ${inquiry.userId}"></h3>
+    <h3 th:text="'작성일 : ' + ${inquiry.date}"></h3>
+    <p th:text="${inquiry.comment}"></p>
+    <div th:each="fileName : ${fileNameList}">
+        <img th:src="'/uploads/' + ${fileName}" alt="Img failed to load" style="height: 200px; width: 200px">
+    </div>
+
+    <form method="post"
+          th:action="'/inquiry/' + ${inquiry.id} + '/answer'"
+          enctype="multipart/form-data">
+        <label for="title">제목</label>
+        <input id="title"
+               name="title"
+               type="text"
+               style="width: 400px; height: 20px"
+               required/>
+        <br/>
+        <label for="comment">본문</label>
+        <br/>
+        <input id="comment"
+               name="comment"
+               placeholder="400자 내로 입력 해주세요"
+               type="text" style="height: 400px; width: 400px"
+               required/>
+        <br/>
+        <label for="file">첨부파일</label>
+        <input id="file"
+               name="files"
+               type="file"
+               multiple/>
+        <br/>
+        <button>답변</button>
+    </form>
+    <button th:onclick="|location.href='/'|">취소</button>
+</body>
+</html>

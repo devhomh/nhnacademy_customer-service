@@ -3,6 +3,8 @@ package com.nhnacademy.springmvc.config;
 import com.nhnacademy.springmvc.Base;
 import com.nhnacademy.springmvc.domain.Inquiry;
 import com.nhnacademy.springmvc.domain.User;
+import com.nhnacademy.springmvc.repository.AnswerRepository;
+import com.nhnacademy.springmvc.repository.AnswerRepositoryImpl;
 import com.nhnacademy.springmvc.repository.InquiryRepository;
 import com.nhnacademy.springmvc.repository.InquiryRepositoryImpl;
 import com.nhnacademy.springmvc.repository.UserRepository;
@@ -91,5 +93,10 @@ public class RootConfig {
                         .setComment("just so bad"));
 
         return inquiryRepository;
+    }
+
+    @Bean
+    public AnswerRepository answerRepository(){
+        return new AnswerRepositoryImpl();
     }
 }

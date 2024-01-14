@@ -6,6 +6,35 @@
 </head>
 <body>
     <h1 th:text="${user.name} + '님 환영 합니다!'"></h1>
+    <form method="get" th:action="@{'/admin/' + ${user.id}}">
+        <select id="type" name="type" onchange="this.form.submit()">
+            <option th:each="type : ${typeList}"
+                    th:value="${type}"
+                    th:text="${type}"
+                    th:selected="${type == selectedType}">
+            </option>
+        </select>
+    </form>
+    <table style="width: 500px;">
+        <thead>
+        <tr>
+            <th>제목</th>
+            <th>작성일시</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="inquiry : ${inquiryList}">
+            <td>
+                <a th:href="@{'/inquiry/' + ${inquiry.id}}">
+                    <span th:text="${inquiry.title}"></span>
+                </a>
+            </td>
+            <td>
+                <span th:text="${inquiry.date}"></span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 
     <form method="POST" action="/logout" >
         <button type="submit">로그아웃</button>
