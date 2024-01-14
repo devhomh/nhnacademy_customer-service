@@ -127,17 +127,19 @@ public class InquiryController {
         if(Objects.nonNull(files)){
             Map<String, MultipartFile> fileMap = new HashMap<>();
             for (MultipartFile file : files) {
-                String directory = getDirectory(request);
-                String fileName = userId + "_" + inquiry.getId() + "_" + file.getOriginalFilename();
+                if(!Objects.equals(file.getOriginalFilename(), "")){
+                    String directory = getDirectory(request);
+                    String fileName = userId + "_" + inquiry.getId() + "_" + file.getOriginalFilename();
 
-                Path filePath = Paths.get(directory, fileName);
+                    Path filePath = Paths.get(directory, fileName);
 
-                try {
-                    file.transferTo(filePath.toFile());
-                } catch (IOException exception){
-                    log.error("File Upload Error");
+                    try {
+                        file.transferTo(filePath.toFile());
+                    } catch (IOException exception){
+                        log.error("File Upload Error");
+                    }
+                    fileMap.put(fileName, file);
                 }
-                fileMap.put(fileName, file);
             }
             inquiry.uploadFiles(fileMap);
         }
@@ -189,26 +191,31 @@ public class InquiryController {
         List<MultipartFile> files = inquiryRequest.getFiles();
 
         if(Objects.nonNull(files)){
-            Map<String, MultipartFile> fileMap = inquiry.getFiles();
+            Map<String, MultipartFile> fileMap = Objects.nonNull(inquiry.getFiles())
+                    ? inquiry.getFiles()
+                    : new HashMap<>();
+
             for (MultipartFile file : files) {
-                String directory = getDirectory(request);
-                String fileName = userId + "_" + inquiry.getId() + "_" + file.getOriginalFilename();
+                if(!Objects.equals(file.getOriginalFilename(), "")){
+                    String directory = getDirectory(request);
+                    String fileName = userId + "_" + inquiry.getId() + "_" + file.getOriginalFilename();
 
-                if(fileMap.containsKey(fileName)){
-                    int extensionIndex = fileName.lastIndexOf(".");
-                    String baseName = fileName.substring(0, extensionIndex);
-                    String extension = fileName.substring(extensionIndex);
-                    fileName = baseName + "_1" + extension;
+                    if(!fileMap.isEmpty() && fileMap.containsKey(fileName)){
+                        int extensionIndex = fileName.lastIndexOf(".");
+                        String baseName = fileName.substring(0, extensionIndex);
+                        String extension = fileName.substring(extensionIndex);
+                        fileName = baseName + "_1" + extension;
+                    }
+
+                    Path filePath = Paths.get(directory, fileName);
+
+                    try {
+                        file.transferTo(filePath.toFile());
+                    } catch (IOException exception){
+                        log.error("File Upload Error");
+                    }
+                    fileMap.put(fileName, file);
                 }
-
-                Path filePath = Paths.get(directory, fileName);
-
-                try {
-                    file.transferTo(filePath.toFile());
-                } catch (IOException exception){
-                    log.error("File Upload Error");
-                }
-                fileMap.put(fileName, file);
             }
             inquiry.uploadFiles(fileMap);
         }

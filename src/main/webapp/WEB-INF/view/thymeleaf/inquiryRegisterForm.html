@@ -47,11 +47,10 @@
         <input id="file"
                name="files"
                type="file"
-               th:value="${not #strings.isEmpty(inquiry) ? inquiry.files : ''}"
                multiple/>
         <br/>
         <button type="submit" th:text="${#strings.isEmpty(inquiry) ? '등록' : '수정'}"></button>
-        <button type="button" th:onclick="/">취소</button>
     </form>
+    <button th:onclick="|location.href='/'|">취소</button>
 </body>
 </html>

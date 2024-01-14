@@ -36,7 +36,7 @@ public class InquiryRepositoryImpl implements InquiryRepository{
         }
 
         if (exists(inquiry.getId())) {
-            throw new InquiryNotFoundException();
+            throw new InquiryAlreadyExistsException();
         }
         inquiryMap.put(inquiry.getId(), inquiry);
 
