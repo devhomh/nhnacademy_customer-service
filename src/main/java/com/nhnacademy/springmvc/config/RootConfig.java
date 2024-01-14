@@ -61,6 +61,30 @@ public class RootConfig {
                         .setComment("just so good"));
 
         inquiryRepository.registerInquiry(
+                Inquiry.create("jinwoo")
+                        .setType(Inquiry.Type.TYPE_COMPLIMENT)
+                        .setTitle("So good!!")
+                        .setComment("just so good!!!"));
+
+        inquiryRepository.registerInquiry(
+                Inquiry.create("jinwoo")
+                        .setType(Inquiry.Type.TYPE_SUGGEST)
+                        .setTitle("Suggest")
+                        .setComment("just Suggest"));
+
+        inquiryRepository.registerInquiry(
+                Inquiry.create("jinwoo")
+                        .setType(Inquiry.Type.TYPE_EXCHANGE_REFUND)
+                        .setTitle("Nope")
+                        .setComment("Nope!!!"));
+
+        inquiryRepository.registerInquiry(
+                Inquiry.create("jinwoo")
+                        .setType(Inquiry.Type.TYPE_OTHER)
+                        .setTitle("Guitar")
+                        .setComment("just so good"));
+
+        inquiryRepository.registerInquiry(
                 Inquiry.create("hahajinwoo")
                         .setType(Inquiry.Type.TYPE_COMPLIMENT)
                         .setTitle("So bad")

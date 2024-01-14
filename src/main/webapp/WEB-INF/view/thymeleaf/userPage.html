@@ -6,6 +6,15 @@
 </head>
 <body>
     <h1 th:text="${user.name} + '님 환영 합니다!'"></h1>
+    <form method="get" th:action="@{'/user/' + ${user.id}}">
+        <select id="type" name="type" onchange="this.form.submit()">
+            <option th:each="type : ${typeList}"
+                    th:value="${type}"
+                    th:text="${type}"
+                    th:selected="${type == selectedType}">
+            </option>
+        </select>
+    </form>
     <ul th:each="inquiry : ${inquiryList}">
         <li>
             <a th:href="@{'/inquiry/' + ${inquiry.id}}">
